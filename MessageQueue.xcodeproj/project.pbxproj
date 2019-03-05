@@ -7,7 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		40B858EE221CF0A800BE1845 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 40B858ED221CF0A800BE1845 /* main.cpp */; };
+		40B858F6221CF3AF00BE1845 /* msgQ_A.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 40B858F4221CF3AE00BE1845 /* msgQ_A.cpp */; };
+		40B858F7221CF3AF00BE1845 /* msgQ_B.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 40B858F5221CF3AF00BE1845 /* msgQ_B.cpp */; };
+		40CCFF7E221F835D005881E2 /* ProbeA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 40CCFF7D221F835D005881E2 /* ProbeA.cpp */; };
+		40CCFF81221F8370005881E2 /* ProbeB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 40CCFF7F221F8370005881E2 /* ProbeB.cpp */; };
+		40CCFF83221F8393005881E2 /* ProbeC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 40CCFF82221F8393005881E2 /* ProbeC.cpp */; };
+		40CCFF85221F83AD005881E2 /* DataHub.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 40CCFF84221F83AD005881E2 /* DataHub.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -24,7 +29,12 @@
 
 /* Begin PBXFileReference section */
 		40B858EA221CF0A800BE1845 /* MessageQueue */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MessageQueue; sourceTree = BUILT_PRODUCTS_DIR; };
-		40B858ED221CF0A800BE1845 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		40B858F4221CF3AE00BE1845 /* msgQ_A.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = msgQ_A.cpp; sourceTree = "<group>"; };
+		40B858F5221CF3AF00BE1845 /* msgQ_B.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = msgQ_B.cpp; sourceTree = "<group>"; };
+		40CCFF7D221F835D005881E2 /* ProbeA.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ProbeA.cpp; sourceTree = "<group>"; };
+		40CCFF7F221F8370005881E2 /* ProbeB.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ProbeB.cpp; sourceTree = "<group>"; };
+		40CCFF82221F8393005881E2 /* ProbeC.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ProbeC.cpp; sourceTree = "<group>"; };
+		40CCFF84221F83AD005881E2 /* DataHub.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DataHub.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,7 +67,12 @@
 		40B858EC221CF0A800BE1845 /* MessageQueue */ = {
 			isa = PBXGroup;
 			children = (
-				40B858ED221CF0A800BE1845 /* main.cpp */,
+				40B858F4221CF3AE00BE1845 /* msgQ_A.cpp */,
+				40B858F5221CF3AF00BE1845 /* msgQ_B.cpp */,
+				40CCFF7D221F835D005881E2 /* ProbeA.cpp */,
+				40CCFF7F221F8370005881E2 /* ProbeB.cpp */,
+				40CCFF82221F8393005881E2 /* ProbeC.cpp */,
+				40CCFF84221F83AD005881E2 /* DataHub.cpp */,
 			);
 			path = MessageQueue;
 			sourceTree = "<group>";
@@ -118,7 +133,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				40B858EE221CF0A800BE1845 /* main.cpp in Sources */,
+				40CCFF81221F8370005881E2 /* ProbeB.cpp in Sources */,
+				40CCFF7E221F835D005881E2 /* ProbeA.cpp in Sources */,
+				40CCFF85221F83AD005881E2 /* DataHub.cpp in Sources */,
+				40B858F6221CF3AF00BE1845 /* msgQ_A.cpp in Sources */,
+				40CCFF83221F8393005881E2 /* ProbeC.cpp in Sources */,
+				40B858F7221CF3AF00BE1845 /* msgQ_B.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
