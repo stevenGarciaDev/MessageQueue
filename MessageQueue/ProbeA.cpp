@@ -17,6 +17,8 @@
 #include <cstdlib>
 #include <limits>
 #include <string>
+#include <stdlib.h>     /* srand, rand */
+#include <time.h>       /* time */
 
 using namespace std;
 
@@ -24,13 +26,14 @@ const int MAGIC_SEED_ALPHA = 997;
 const int MAX_INT = std::numeric_limits<int>::max();
 
 int main() {
+    srand( time(0) );
+    
     bool isExecuting = true;
     string sendingMsg = "";
     
-    cout << "Testing" << endl;
-    
     // generates system wide key for the queue
     int qid = msgget(ftok(".",'u'), 0);
+    cout << "qid is " << qid << endl;
     
     // declare my message buffer
     struct buf {
@@ -43,35 +46,34 @@ int main() {
     cout << size << endl;
     cout << MAGIC_SEED_ALPHA << endl;
     
-    
     cout << "/* ----------- Probe A --------------- */" << endl;
     
     while (isExecuting) {
-        
+
         // generate a valid random number
-        int randomValue = 0;
+        int randomValue = MAX_INT;
         while (randomValue % MAGIC_SEED_ALPHA != 0) {
             randomValue = rand() % MAX_INT;
-            
+
             if (randomValue <= 100) {
                 cout << "Probe A will terminate as random value is less than 100: value is " << randomValue << endl;
                 isExecuting = false;
                 continue;
             }
-            
+
         }
         cout << "The random value is " << randomValue << endl;
-        
+
         // send to DataHub
         msg.mtype = 117;
         sendingMsg = "997:" + to_string(randomValue);
         strcpy(msg.greeting, sendingMsg.c_str() );
-        msgsnd(qid, (struct msgbuf*)&msg, size, 0); // send message to queue
+        msgsnd(qid, (struct msgbuf *)&msg, size, 0); // send message to queue
         
         // wait for acknowledgement from DataHub
-        
-        
-        
+
+
+
         // repeat on loop, until generate a random num < 100
     }
 
