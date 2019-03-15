@@ -19,10 +19,12 @@ using namespace std;
 const int PROBE_A_MTYPE = 997;
 const int PROBE_B_MTYPE = 257;
 const int PROBE_C_MTYPE = 251;
+const int DATA_HUB_MTYPE = 117;
 
 int main() {
     // create my msgQ with key value from ftok()
 	int qid = msgget(ftok(".",'u'), IPC_EXCL|IPC_CREAT|0600);
+    string responseMsg = "";
     bool receivingMessages = true;
     bool probeA_Executing = true;
     bool probeB_Executing = true;
@@ -47,8 +49,14 @@ int main() {
         // receive message from Probe A
         if (probeA_Executing) {
             msgrcv(qid, (struct msgbuf *)&msg, size, PROBE_A_MTYPE, 0); // read incoming message
+            cout << getpid() << " (Probe A) Found reading" << endl;
+            cout << msg.greeting << "\n" << endl;
             
-            // then send message to Probe A
+            // then send message in response to Probe A as to acknowledge successfully sent
+            msg.mtype = DATA_HUB_MTYPE;
+            responseMsg = to_string(getpid()) + " DataHub Received Message";
+            strcpy(msg.greeting, responseMsg.c_str() );
+            //msgsnd(qid, (struct msgbuf *)&msg, size, 0); // send message to queue back to Probe A
         }
         
         // receive message from Probe B
