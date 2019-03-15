@@ -66,15 +66,12 @@ int main() {
 
         // send to DataHub
         msg.mtype = 117;
-        sendingMsg = "997:" + to_string(randomValue);
+        sendingMsg = to_string(getpid()) + " (Probe A): " + to_string(randomValue);
         strcpy(msg.greeting, sendingMsg.c_str() );
-        msgsnd(qid, (struct msgbuf *)&msg, size, 0); // send message to queue
+        //msgsnd(qid, (struct msgbuf *)&msg, size, 0); // send message to queue
         
         // wait for acknowledgement from DataHub
-
-
-
-        // repeat on loop, until generate a random num < 100
+        
     }
 
     return 0;
