@@ -58,7 +58,7 @@ int main() {
             if (randomValue <= 100) {
                 cout << "Probe A will terminate as random value is less than 100: value is " << randomValue << endl;
                 
-                msg.mtype = 997;
+                msg.mtype = MAGIC_SEED_ALPHA;
                 sendingMsg = "ProbeA Exit";
                 strcpy(msg.greeting, sendingMsg.c_str() );
                 //msgsnd(qid, (struct msgbuf *)&msg, size, 0); // send message to queue
@@ -71,7 +71,7 @@ int main() {
         cout << "The random value is " << randomValue << endl;
 
         // send to DataHub
-        msg.mtype = 997;
+        msg.mtype = MAGIC_SEED_ALPHA;
         sendingMsg = to_string(getpid()) + " (Probe A): " + to_string(randomValue);
         strcpy(msg.greeting, sendingMsg.c_str() );
         //msgsnd(qid, (struct msgbuf *)&msg, size, 0); // send message to queue
