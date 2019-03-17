@@ -11,11 +11,16 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <cstdlib>
+#include <time.h>
+#include <signal.h>
+#include <unistd.h>
 #include <string>
 #include "kill_patch.h"
+
 using namespace std;
 
 const int MAGIC_SEED_RHO = 251;
+void kill_patch(int, struct msgbuf *, int, long);
 
 int main() {
     srand(time(0)); // Seed for better random values
@@ -32,33 +37,38 @@ int main() {
     buf msg;
 	int size = sizeof(msg)-sizeof(long);
 
-    // Call kill patch function
-    msg.mtype = 521; // Set to mtype for exit
-    string exitmsg = "Probe C is closing.";
+    // Set parameters for kill patch
+    msg.mtype = MAGIC_SEED_RHO; // Set to mtype for exit
+    string exitmsg = "ProbeC exit.";
     strcpy(msg.greeting, exitmsg.c_str() );
-    kill_patch(qid, (struct msgbuf*)&msg, size, msg.mtype);
-    
+
+    // Call kill_patch.h function.
+    kill_patch(qid, (struct msgbuf *)&msg, size, MAGIC_SEED_RHO);
 
     cout << "Probe C: Finding valid reading" << endl;
     bool isValid = false; // Flag to stop validating 
-    do {
+    while (!isValid) {
         // Valid Reading
         int randValue = rand();
         int reading = randValue % MAGIC_SEED_RHO;
         if (reading == 0) { // random integer is divisible by seed.
-            isValid = true; // Toggle flag
+            isValid = true; // void kill_patch(int qid, msgbuf *exitmsg, int size, long mtype);Toggle flag
             string sendingMsg = ""; // Message sent to queue
 
+            cout << "(Probe C): Found a valid reading: " << to_string(randValue) << endl;
+
             // send to DataHub
-            msg.mtype = 251; // mtype set to seed, why not?
-            sendingMsg = to_string(getpid()) + " (Probe C): " + to_string(randValue); // set message to send as PID of probe + valid reading
-            strcpy(msg.greeting, sendingMsg.c_str() ); // Copy message string to char array
+            msg.mtype = MAGIC_SEED_RHO; // mtype set to seed, why not?
+            sendingMsg = "ProbeC Exit";
+            strcpy(msg.greeting, sendingMsg.c_str() );
             msgsnd(qid, (struct msgbuf*)&msg, size, 0); // Send message to queue
+        } else {
+            cout << "(Probe C): Found garbage: " << to_string(randValue) << endl;
         }
-    } while (!isValid);
+    }
 
     // Delete msgqueue when testing probe C only
-	msgctl (qid, IPC_RMID, NULL);
+	//msgctl (qid, IPC_RMID, NULL);
 
     exit(0);
 }
