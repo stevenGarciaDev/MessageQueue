@@ -61,7 +61,7 @@ int main() {
                 msg.mtype = MAGIC_SEED_ALPHA;
                 sendingMsg = "ProbeA Exit";
                 strcpy(msg.greeting, sendingMsg.c_str() );
-                //msgsnd(qid, (struct msgbuf *)&msg, size, 0); // send message to queue
+                msgsnd(qid, (struct msgbuf *)&msg, size, 0); // send message to queue
                 
                 isExecuting = false;
                 continue;
