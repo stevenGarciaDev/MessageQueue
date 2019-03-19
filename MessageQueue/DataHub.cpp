@@ -87,6 +87,14 @@ int main() {
             msgrcv(qid, (struct msgbuf *)&msg, size, PROBE_B_MTYPE, 0); // read incoming message
             messagesReceived++;
             
+            currentMsg = msg.greeting;
+            
+            if (currentMsg.compare("Probe B Exit") == 0) {
+                probeB_Executing = false;
+            } else {
+                cout << getpid() << " (Probe B) Found reading" << endl;
+                cout << msg.greeting << "\n" << endl;
+            }
             
         }
         
