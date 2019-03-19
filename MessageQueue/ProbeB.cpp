@@ -72,18 +72,13 @@ int main() {
                 msg.mtype = PROBE_B_SEED;
                 hubMessage = "Probe B Exit";
                 strcpy(msg.greeting, hubMessage.c_str() );
+                msgsnd(qid, (struct msgbuf *)&msg, size, 0); // send message to queue
                 
+                isExecuting = false;
+                continue;
             }
-
         }
-
-
-        // send to DataHub
-        msg.mtype = MAX_INT_LIMIT;
-        hubMessage = to_string(getpid()) + " (Probe B): " + to_string(random);
-        strcpy(msg.greeting, hubMessage.c_str() );
-        msgsnd(qid, (struct msgbuf *)&msg, size, 0); // send message to queue
-
+        
         
     }
 
