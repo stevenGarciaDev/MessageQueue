@@ -37,14 +37,6 @@ int main() {
     buf msg;
 	int size = sizeof(msg)-sizeof(long);
 
-    // Set parameters for kill patch
-    msg.mtype = MAGIC_SEED_RHO; // Set to mtype for exit
-    string exitmsg = "ProbeC exit.";
-    strcpy(msg.greeting, exitmsg.c_str() );
-
-    // Call kill_patch.h function.
-    kill_patch(qid, (struct msgbuf *)&msg, size, MAGIC_SEED_RHO);
-
     cout << "Probe C: Finding valid reading" << endl;
     bool isValid = false; // Flag to stop validating 
     while (!isValid) {
@@ -67,6 +59,14 @@ int main() {
         }
     }
 
+    // Set parameters for kill patch
+    msg.mtype = MAGIC_SEED_RHO; // Set to mtype for exit
+    string exitmsg = "ProbeC exit.";
+    strcpy(msg.greeting, exitmsg.c_str() );
+
+    // Call kill_patch.h function.
+    kill_patch(qid, (struct msgbuf *)&msg, size, MAGIC_SEED_RHO);
+    
     // Delete msgqueue when testing probe C only
 	//msgctl (qid, IPC_RMID, NULL);
 

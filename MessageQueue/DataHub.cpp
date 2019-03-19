@@ -31,7 +31,7 @@ int main() {
     
     string responseMsg = "";
     string currentMsg = "";
-    //bool receivingMessages = true;
+    bool receivingMessages = true;
     bool probeA_Executing = true;
     bool probeB_Executing = true;
     bool probeC_Executing = true;
@@ -45,6 +45,11 @@ int main() {
 
 	buf msg;
 	int size = sizeof(msg)-sizeof(long);
+
+//    // Read message (Probe C)
+//    msgrcv(qid, (struct msgbuf *)&msg, size, 251, 0); // read message from probe c (251 aka Rho)
+//    cout << getpid() << " (Data Hub): Found reading" << endl;
+//    cout << msg.greeting << endl;
     
     while (probeA_Executing || probeB_Executing || probeC_Executing) {
         
@@ -113,7 +118,7 @@ int main() {
                 responseMsg = "DataHub Received Message";
                 strcpy(msg.greeting, responseMsg.c_str() );
             }
-
+            
         }
         
     }
