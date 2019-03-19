@@ -89,7 +89,6 @@ int main() {
 	    
 	// receive message from Probe B
         if (probeB_Executing) {
-	    while (receivingMessages) {
 		cout<<"HERE";
 		// receive message from Probe B
 		if (probeB_Executing) {
