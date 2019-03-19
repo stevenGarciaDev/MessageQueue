@@ -96,7 +96,7 @@ int main() {
             currentMsg = msg.greeting;
             
             // check if message sent by Probe C was to exit program
-            if (currentMsg.compare("ProbeC Exit") == 0) {
+            if (currentMsg.compare("ProbeC exit.") == 0) {
 
                 probeC_Executing = false;
                 
