@@ -22,7 +22,7 @@ const int PROBE_B_MTYPE = 257;
 const int PROBE_C_MTYPE = 251;
 const int DATA_HUB_MTYPE = 117;
 
-void force_patch(int, struct msgbuf *, int, long);
+int force_patch(pid_t pid);
 
 int main() {
     // create my msgQ with key value from ftok()
@@ -89,28 +89,32 @@ int main() {
 	    
 	// receive message from Probe B
         if (probeB_Executing) {
-            if(messagesReceived >= 10000) {
-                // Call force_patch.h function.
-                force_patch(qid, (struct msgbuf *)&msg, size, PROBE_B_MTYPE);
-            
-            }	
+	    while (receivingMessages) {
+		cout<<"HERE";
+		// receive message from Probe B
+		if (probeB_Executing) {
+		    cout<<"PROBE B EXECUTING";
+		    if(messagesReceived >= 100) {
 
-                msgrcv(qid, (struct msgbuf *)&msg, size, PROBE_B_MTYPE, 0); // read incoming message
-                messagesReceived++;  
-                
-            
-            //if (currentMsg.compare("Probe B Exit") == 0) {
-                //    probeB_Executing = false;
-                //} else {
-                //    cout << getpid() << " (Probe B) Found reading" << endl;
-                //    cout << msg.greeting << "\n" << endl;
-                //}
-                //cout << getpid() << " (Probe B) Found reading" << endl;
-                //cout << msg.greeting << "\n" << endl;
+			pid_t pid = stoi(msg.greeting);
+			cout<<to_string(pid);
+			// Call force_patch.h function.
+			force_patch(pid);
+			cout<<"pass";
+		    }	
 
-        // currentMsg = msg.greeting;
-            
-        }    
+		    msgrcv(qid, (struct msgbuf *)&msg, size, PROBE_B_MTYPE, 0); // read incoming message
+		    messagesReceived++;  
+
+		    //cout << getpid() << " (Probe B) Found reading" << endl;
+		    //cout << msg.greeting << "\n" << endl;
+
+		   // currentMsg = msg.greeting;
+
+		}
+
+
+	    } 
 	    
         
         // receive message from Probe C
