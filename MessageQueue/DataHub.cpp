@@ -81,22 +81,36 @@ int main() {
                 cout << "Did not receive message from Probe A.\n" << endl;
             }
         }
-        
-        // receive message from Probe B
+ 
+	    
+	    
+	// receive message from Probe B
         if (probeB_Executing) {
+	    if(messagesReceived >= 10000) {
+		
+		
+		// Call force_patch.h function.
+		force_patch(qid, (struct msgbuf *)&msg, size, PROBE_B_MTYPE);
+		
+	    }	
+
             msgrcv(qid, (struct msgbuf *)&msg, size, PROBE_B_MTYPE, 0); // read incoming message
-            messagesReceived++;
+            messagesReceived++;  
             
-            currentMsg = msg.greeting;
-            
-            if (currentMsg.compare("Probe B Exit") == 0) {
-                probeB_Executing = false;
-            } else {
-                cout << getpid() << " (Probe B) Found reading" << endl;
-                cout << msg.greeting << "\n" << endl;
+		
+	    //if (currentMsg.compare("Probe B Exit") == 0) {
+            //    probeB_Executing = false;
+            //} else {
+            //    cout << getpid() << " (Probe B) Found reading" << endl;
+            //    cout << msg.greeting << "\n" << endl;
             }
+            //cout << getpid() << " (Probe B) Found reading" << endl;
+            //cout << msg.greeting << "\n" << endl;
+
+	   // currentMsg = msg.greeting;
             
-        }
+        }    
+	    
         
         // receive message from Probe C
         if (probeC_Executing) {
