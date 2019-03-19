@@ -106,7 +106,7 @@ int main() {
             //} else {
             //    cout << getpid() << " (Probe B) Found reading" << endl;
             //    cout << msg.greeting << "\n" << endl;
-            }
+            //}
             //cout << getpid() << " (Probe B) Found reading" << endl;
             //cout << msg.greeting << "\n" << endl;
 
