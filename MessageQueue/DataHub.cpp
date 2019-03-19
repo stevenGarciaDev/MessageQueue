@@ -35,6 +35,7 @@ int main() {
     bool probeA_Executing = true;
     bool probeB_Executing = true;
     bool probeC_Executing = true;
+    int messagesReceived = 0;
     
     // declare my message buffer
 	struct buf {
@@ -54,18 +55,18 @@ int main() {
         
         // receive message from Probe A
         if (probeA_Executing) {
-            cout << "about to receive message" << endl;
+//            cout << "about to receive message" << endl;
             msgrcv(qid, (struct msgbuf *)&msg, size, PROBE_A_MTYPE, 0); // read incoming message
-            cout << "received message" << endl;
             
             if (msg.mtype == PROBE_A_MTYPE) {
+                messagesReceived++;
                 cout << getpid() << " (Probe A) Found reading" << endl;
                 cout << "Message: " << msg.greeting << "\n" << endl;
                 
                 // check if message sent by Probe A was to exit program
                 if (currentMsg.compare("ProbeA Exit") == 0) {
                     
-                    cout << "exiting" << endl;
+                    cout << "Probe A exiting" << endl;
                     probeA_Executing = false;
                     
                 } else {
@@ -83,13 +84,16 @@ int main() {
         
         // receive message from Probe B
         if (probeB_Executing) {
+            msgrcv(qid, (struct msgbuf *)&msg, size, PROBE_B_MTYPE, 0); // read incoming message
+            messagesReceived++;
             
-           msgrcv(qid, (struct msgbuf *)&msg, size, PROBE_B_MTYPE, 0); // read incoming message
+            
         }
         
         // receive message from Probe C
         if (probeC_Executing) {
             msgrcv(qid, (struct msgbuf *)&msg, size, PROBE_C_MTYPE, 0); // read incoming message
+            messagesReceived++;
             cout << getpid() << " (Probe C) Found reading" << endl;
             cout << msg.greeting << "\n" << endl;
             

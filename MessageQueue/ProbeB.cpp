@@ -76,7 +76,7 @@ int main() {
         msg.mtype = MAX_INT_LIMIT;
         hubMessage = to_string(getpid()) + " (Probe B): " + to_string(random);
         strcpy(msg.greeting, hubMessage.c_str() );
-        //msgsnd(qid, (struct msgbuf *)&msg, size, 0); // send message to queue
+        msgsnd(qid, (struct msgbuf *)&msg, size, 0); // send message to queue
 
         
     }
