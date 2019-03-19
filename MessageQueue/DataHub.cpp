@@ -14,12 +14,15 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <cstdlib>
+#include "force_patch.h"
 using namespace std;
 
 const int PROBE_A_MTYPE = 997;
 const int PROBE_B_MTYPE = 257;
 const int PROBE_C_MTYPE = 251;
 const int DATA_HUB_MTYPE = 117;
+
+void force_patch(int, struct msgbuf *, int, long);
 
 int main() {
     // create my msgQ with key value from ftok()
