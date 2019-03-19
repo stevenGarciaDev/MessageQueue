@@ -23,12 +23,14 @@
 using namespace std;
 
 const int MAGIC_SEED_ALPHA = 997;
+const int DATA_HUB_MTYPE = 117;
 const int MAX_INT = std::numeric_limits<int>::max();
 
 int main() {
     srand( time(0) );
     
     bool isExecuting = true;
+    bool isAcknowledged = true;
     string sendingMsg = "";
     
     // generates system wide key for the queue
@@ -54,6 +56,7 @@ int main() {
         int randomValue = MAX_INT;
         while (randomValue % MAGIC_SEED_ALPHA != 0) {
             randomValue = rand() % MAX_INT;
+            
 
             if (randomValue <= 100) {
                 cout << "Probe A will terminate as random value is less than 100: value is " << randomValue << endl;
@@ -74,9 +77,22 @@ int main() {
         msg.mtype = MAGIC_SEED_ALPHA;
         sendingMsg = to_string(getpid()) + " (Probe A): " + to_string(randomValue);
         strcpy(msg.greeting, sendingMsg.c_str() );
-        //msgsnd(qid, (struct msgbuf *)&msg, size, 0); // send message to queue
+        msgsnd(qid, (struct msgbuf *)&msg, size, 0); // send message to queue
+        isAcknowledged = false;
         
         // wait for acknowledgement from DataHub
+        if (!isAcknowledged) {
+            //cout << "About to receive" << endl;
+            msgrcv(qid, (struct msgbuf *)&msg, size, DATA_HUB_MTYPE, 0);
+            //cout << "Received" << endl;
+            if (msg.mtype == DATA_HUB_MTYPE) {
+                isAcknowledged = true;
+                cout << "Receive acknowledgement from DataHub\n" << endl;
+            } else {
+                 cout << "DID NOT Receive acknowledgement from DataHub\n" << endl;
+            }
+        }
+        
         
     }
 

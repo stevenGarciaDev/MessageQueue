@@ -24,6 +24,11 @@ const int DATA_HUB_MTYPE = 117;
 int main() {
     // create my msgQ with key value from ftok()
 	int qid = msgget(ftok(".",'u'), IPC_EXCL|IPC_CREAT|0600);
+    if (qid == -1) {
+        qid = msgget(ftok(".",'u'), 0);
+    }
+    cout << "qid is " << qid << endl;
+    
     string responseMsg = "";
     string currentMsg = "";
     bool receivingMessages = true;
@@ -40,40 +45,46 @@ int main() {
 	buf msg;
 	int size = sizeof(msg)-sizeof(long);
 
-	// Read message (Probe C)
-	msgrcv(qid, (struct msgbuf *)&msg, size, 251, 0); // read message from probe c (251 aka Rho)
-    cout << getpid() << " (Data Hub): Found reading" << endl;
-    cout << msg.greeting << endl;
+//    // Read message (Probe C)
+//    msgrcv(qid, (struct msgbuf *)&msg, size, 251, 0); // read message from probe c (251 aka Rho)
+//    cout << getpid() << " (Data Hub): Found reading" << endl;
+//    cout << msg.greeting << endl;
     
     while (receivingMessages) {
         
         // receive message from Probe A
         if (probeA_Executing) {
+            cout << "about to receive message" << endl;
             msgrcv(qid, (struct msgbuf *)&msg, size, PROBE_A_MTYPE, 0); // read incoming message
-            cout << getpid() << " (Probe A) Found reading" << endl;
-            cout << msg.greeting << "\n" << endl;
+            cout << "received message" << endl;
             
-            currentMsg = msg.greeting;
-            
-            // check if message sent by Probe A was to exit program
-            if (currentMsg.compare("ProbeA Exit") == 0) {
+            if (msg.mtype == PROBE_A_MTYPE) {
+                cout << getpid() << " (Probe A) Found reading" << endl;
+                cout << "Message: " << msg.greeting << "\n" << endl;
                 
-                probeA_Executing = false;
-                
+                // check if message sent by Probe A was to exit program
+                if (currentMsg.compare("ProbeA Exit") == 0) {
+                    
+                    cout << "exiting" << endl;
+                    probeA_Executing = false;
+                    
+                } else {
+                    // otherwise send message in response to Probe A as to acknowledge successfully sent
+                    msg.mtype = DATA_HUB_MTYPE;
+                    responseMsg = "Acknowledge";
+                    strcpy(msg.greeting, responseMsg.c_str() );
+                    msgsnd(qid, (struct msgbuf *)&msg, size, 0); // send message to queue back to Probe A
+                    cout << responseMsg << endl;
+                }
             } else {
-                // otherwise send message in response to Probe A as to acknowledge successfully sent
-                msg.mtype = DATA_HUB_MTYPE;
-                responseMsg = "DataHub Received Message";
-                strcpy(msg.greeting, responseMsg.c_str() );
-                //msgsnd(qid, (struct msgbuf *)&msg, size, 0); // send message to queue back to Probe A
+                cout << "Did not receive message from Probe A.\n" << endl;
             }
-            
-            
         }
         
         // receive message from Probe B
         if (probeB_Executing) {
-            msgrcv(qid, (struct msgbuf *)&msg, size, PROBE_B_MTYPE, 0); // read incoming message
+            
+           msgrcv(qid, (struct msgbuf *)&msg, size, PROBE_B_MTYPE, 0); // read incoming message
         }
         
         // receive message from Probe C
@@ -96,9 +107,9 @@ int main() {
                 strcpy(msg.greeting, responseMsg.c_str() );
             }
 
-            //msgrcv(qid, (struct msgbuf *)&msg, size, PROBE_C_MTYPE, 0); // read message from probe c (251 aka Rho)
-            //cout << getpid() << " (Probe C): Found reading" << endl;
-            //cout << msg.greeting << "\n" << endl;
+//            msgrcv(qid, (struct msgbuf *)&msg, size, PROBE_C_MTYPE, 0); // read message from probe c (251 aka Rho)
+//            cout << getpid() << " (Probe C): Found reading" << endl;
+//            cout << msg.greeting << "\n" << endl;
         }
         
     }

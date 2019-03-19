@@ -28,6 +28,9 @@ int main() {
 
     // create my msgQ with key value from ftok()
     int qid = msgget(ftok(".",'u'), IPC_EXCL|IPC_CREAT|0600);
+    if (qid == -1) {
+        qid = msgget(ftok(".",'u'), 0);
+    }
     cout << "qid is " << qid << endl;
 
     // declare my message buffer
