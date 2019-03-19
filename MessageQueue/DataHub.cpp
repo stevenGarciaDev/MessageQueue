@@ -119,23 +119,14 @@ int main() {
         if (probeC_Executing) {
             msgrcv(qid, (struct msgbuf *)&msg, size, PROBE_C_MTYPE, 0); // read incoming message
             messagesReceived++;
-            cout << getpid() << " (Probe C) Found reading" << endl;
-            cout << msg.greeting << "\n" << endl;
-            
-            currentMsg = msg.greeting;
-            
-            // check if message sent by Probe C was to exit program
+            // check if message sent by Probe C was valid: message ("ProbeC exit.")
             if (currentMsg.compare("ProbeC exit.") == 0) {
-
-                probeC_Executing = false;
-                
-            } else {
-                // otherwise send message in response to Probe C as to acknowledge successfully sent
-                msg.mtype = DATA_HUB_MTYPE;
-                responseMsg = "DataHub Received Message";
-                strcpy(msg.greeting, responseMsg.c_str() );
-            }
+                cout << getpid() << " (Probe C) Found reading" << endl;
+                cout << msg.greeting << "\n" << endl;
             
+                currentMsg = msg.greeting;
+                probeC_Executing = false;
+            }
         }
         
     }
