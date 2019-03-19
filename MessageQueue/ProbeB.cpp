@@ -52,22 +52,28 @@ int main() {
    
     while (isExecuting) {
 
-    // generate a valid random number
- 	int random=MAX_INT_LIMIT;
-	if(random % PROBE_B_SEED != 0){
-        	random = rand() % MAX_INT_LIMIT;
-		count++;
-		cout << "The random value is: " << random << endl;
-		//Send message to the hub
-                //msgsnd(qid, (struct msgbuf *)&msg, size, 0); // send message to queue
-            	if (count > DATA_HUB_LIMIT) {
-                	cout << "Probe B will terminate since the Data Hub has recieved 10,000 messages." << endl;
-                	isExecuting = false;
-			msg.mtype = PROBE_B_SEED;
-                	hubMessage = "Probe B Exit";
-                	strcpy(msg.greeting, hubMessage.c_str() );
-                	
-            	}
+        // generate a valid random number
+        int random = MAX_INT_LIMIT;
+        
+        if(random % PROBE_B_SEED != 0){
+            random = rand() % MAX_INT_LIMIT;
+            count++;
+            cout << "The random value is: " << random << endl;
+            
+            //Send message to the hub
+            msg.mtype = PROBE_B_SEED;
+            hubMessage = to_string(getpid()) + " (Probe B): " + to_string(random);
+            strcpy(msg.greeting, hubMessage.c_str() );
+            msgsnd(qid, (struct msgbuf *)&msg, size, 0); // send message to queue
+            
+            if (count > DATA_HUB_LIMIT) {
+                cout << "Probe B will terminate since the Data Hub has recieved 10,000 messages." << endl;
+                isExecuting = false;
+                msg.mtype = PROBE_B_SEED;
+                hubMessage = "Probe B Exit";
+                strcpy(msg.greeting, hubMessage.c_str() );
+                
+            }
 
         }
 
