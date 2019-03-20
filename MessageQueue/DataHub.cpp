@@ -34,7 +34,6 @@ int main() {
     
     string responseMsg = "";
     string currentMsg = "";
-    bool receivingMessages = true;
     bool probeA_Executing = true;
     bool probeB_Executing = true;
     bool probeC_Executing = true;
@@ -68,7 +67,6 @@ int main() {
                 
                 // check if message sent by Probe A was to exit program
                 if (currentMsg.compare("ProbeA Exit") == 0) {
-                    
                     cout << "Probe A exiting" << endl;
                     probeA_Executing = false;
                     
@@ -80,37 +78,27 @@ int main() {
                     msgsnd(qid, (struct msgbuf *)&msg, size, 0); // send message to queue back to Probe A
                     cout << responseMsg << endl;
                 }
-            } else {
-                cout << "Did not receive message from Probe A.\n" << endl;
-            }
+            } 
+            //else {
+            //    cout << "Did not receive message from Probe A.\n" << endl;
+            //}
         }
  
 	    
 	    
 	// receive message from Probe B
         if (probeB_Executing) {
-		cout<<"HERE";
-		// receive message from Probe B
-		if (probeB_Executing) {
-		    cout<<"PROBE B EXECUTING";
-		    if(messagesReceived >= 100) {
-
-			pid_t pid = stoi(msg.greeting);
-			cout<<to_string(pid);
-			// Call force_patch.h function.
-			force_patch(pid);
-			cout<<"pass";
-		    }	
-
-		    msgrcv(qid, (struct msgbuf *)&msg, size, PROBE_B_MTYPE, 0); // read incoming message
-		    messagesReceived++;  
-
-		    //cout << getpid() << " (Probe B) Found reading" << endl;
-		    //cout << msg.greeting << "\n" << endl;
-
-		   // currentMsg = msg.greeting;
-
-		}
+            msgrcv(qid, (struct msgbuf *)&msg, size, PROBE_B_MTYPE, 0); // read incoming message
+            messagesReceived++;  
+            // receive message from Probe B
+            if(messagesReceived >= 100) {
+                pid_t pid = stoi(msg.greeting);
+                // Call force_patch.h function.
+                force_patch(pid);
+                // Stop Probe B reading
+                probeB_Executing = false;
+            }	
+            
 
 
 	    } 

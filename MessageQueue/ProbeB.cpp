@@ -49,10 +49,6 @@ int main() {
 	cout << "Magic ProbeB seed: " << PROBE_B_SEED << endl;
 	cout << "Probe B begins here: " << endl;
 
-	hubMessage = to_string(getpid()) + "ProbeB";
-	strcpy(msg.greeting, hubMessage.c_str() );
-	msgsnd(qid, (struct msgbuf *)&msg, size, 0); // send message to queue
-
 	while (isExecuting) {
 		// generate a valid random number
 		int random=MAX_INT_LIMIT;
@@ -61,8 +57,8 @@ int main() {
 			cout << "The random value is: " << random << endl;
 		}
 		// send to DataHub
-		msg.mtype = MAX_INT_LIMIT;
-		hubMessage = to_string(getpid()) + "ProbeB" + to_string(random);
+		msg.mtype = PROBE_B_SEED;
+		hubMessage = to_string(getpid());
 		strcpy(msg.greeting, hubMessage.c_str() );
 		msgsnd(qid, (struct msgbuf *)&msg, size, 0); // send message to queue
 	}
