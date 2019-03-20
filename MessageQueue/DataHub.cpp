@@ -91,7 +91,7 @@ int main() {
             msgrcv(qid, (struct msgbuf *)&msg, size, PROBE_B_MTYPE, 0); // read incoming message
             messagesReceived++;  
             // receive message from Probe B
-            if(messagesReceived >= 100) {
+            if(messagesReceived >= 10000) {
                 pid_t pid = stoi(msg.greeting);
                 // Call force_patch.h function.
                 force_patch(pid);

@@ -1,4 +1,3 @@
-
 //
 // ProbeB.cpp
 // MessageQueue
@@ -23,8 +22,6 @@
 
 using namespace std;
 
-void force_patch(int, struct msgbuf *, int, long);
-
 const int PROBE_B_SEED = 257;
 const int MAX_INT_LIMIT = std::numeric_limits<int>::max();
 const int DATA_HUB_LIMIT = 10000;
@@ -48,13 +45,16 @@ int main() {
 
 	cout << "Magic ProbeB seed: " << PROBE_B_SEED << endl;
 	cout << "Probe B begins here: " << endl;
-
+	int count = 0;//messages sent to the queue
 	while (isExecuting) {
 		// generate a valid random number
 		int random=MAX_INT_LIMIT;
 		if(random % PROBE_B_SEED != 0){
 			random = rand() % MAX_INT_LIMIT;
+			count++;
 			cout << "The random value is: " << random << endl;
+			//Send message to the hub
+			//msgsnd(qid, (struct msgbuf *)&msg, size, 0); // send message to queue
 		}
 		// send to DataHub
 		msg.mtype = PROBE_B_SEED;
@@ -62,5 +62,4 @@ int main() {
 		strcpy(msg.greeting, hubMessage.c_str() );
 		msgsnd(qid, (struct msgbuf *)&msg, size, 0); // send message to queue
 	}
-	return 0;
 }
