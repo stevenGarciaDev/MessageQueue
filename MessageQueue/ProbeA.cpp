@@ -28,15 +28,15 @@ const int MAX_INT = std::numeric_limits<int>::max();
 
 int main() {
     srand( time(0) );
-    
+
     bool isExecuting = true;
     bool isAcknowledged = true;
     string sendingMsg = "";
-    
+
     // generates system wide key for the queue
     int qid = msgget(ftok(".",'u'), 0);
     cout << "qid is " << qid << endl;
-    
+
     // declare my message buffer
     struct buf {
         long mtype; // required
@@ -44,28 +44,28 @@ int main() {
     };
     buf msg;
     int size = sizeof(msg)-sizeof(long);
-    
+
     cout << size << endl;
     cout << MAGIC_SEED_ALPHA << endl;
-    
+
     cout << "/* ----------- Probe A --------------- */" << endl;
-    
+
     while (isExecuting) {
 
         // generate a valid random number
         int randomValue = MAX_INT;
         while (randomValue % MAGIC_SEED_ALPHA != 0) {
             randomValue = rand() % MAX_INT;
-            
+
 
             if (randomValue <= 100) {
                 cout << "Probe A will terminate as random value is less than 100: value is " << randomValue << endl;
-                
-                msg.mtype = MAGIC_SEED_ALPHA;
+
+                msg.mtype = DATA_HUB_MTYPE;
                 sendingMsg = "ProbeA Exit";
                 strcpy(msg.greeting, sendingMsg.c_str() );
                 msgsnd(qid, (struct msgbuf *)&msg, size, 0); // send message to queue
-                
+
                 isExecuting = false;
                 continue;
             }
@@ -74,12 +74,12 @@ int main() {
         cout << "The random value is " << randomValue << endl;
 
         // send to DataHub
-        msg.mtype = MAGIC_SEED_ALPHA;
-        sendingMsg = to_string(getpid()) + " (Probe A): " + to_string(randomValue);
+        msg.mtype = DATA_HUB_MTYPE;
+        sendingMsg = to_string(getpid()) + " ProbeA: " + to_string(randomValue);
         strcpy(msg.greeting, sendingMsg.c_str() );
         msgsnd(qid, (struct msgbuf *)&msg, size, 0); // send message to queue
         isAcknowledged = false;
-        
+
         // wait for acknowledgement from DataHub
         if (!isAcknowledged) {
             //cout << "About to receive" << endl;
@@ -92,8 +92,8 @@ int main() {
                  cout << "DID NOT Receive acknowledgement from DataHub\n" << endl;
             }
         }
-        
-        
+
+
     }
 
     return 0;
