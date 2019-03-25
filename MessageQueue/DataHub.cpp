@@ -1,11 +1,3 @@
-//
-//  DataHub.cpp
-//  MessageQueue
-//
-//  Created by Steven Garcia on 2/21/19.
-//  Copyright © 2019 StevenOnSoftware. All rights reserved.
-//
-
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/msg.h>
@@ -14,15 +6,11 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <cstdlib>
+#include <bits/stdc++.h> 
 #include "force_patch.h"
 using namespace std;
 
-const int PROBE_A_MTYPE = 997;
-const int PROBE_B_MTYPE = 257;
-const int PROBE_C_MTYPE = 251;
-const int DATA_HUB_MTYPE = 117;
-
-int force_patch(pid_t pid);
+const int MTYPE = 555;
 
 int main() {
     // create my msgQ with key value from ftok()
@@ -30,15 +18,8 @@ int main() {
     if (qid == -1) {
         qid = msgget(ftok(".",'u'), 0);
     }
-    cout << "qid is " << qid << endl;
-    
-    string responseMsg = "";
-    string currentMsg = "";
-    bool probeA_Executing = true;
-    bool probeB_Executing = true;
-    bool probeC_Executing = true;
-    int messagesReceived = 0;
-    
+    cout << "QID is " << qid << endl;
+
     // declare my message buffer
 	struct buf {
 		long mtype; // required
@@ -48,80 +29,50 @@ int main() {
 	buf msg;
 	int size = sizeof(msg)-sizeof(long);
 
-//    // Read message (Probe C)
-//    msgrcv(qid, (struct msgbuf *)&msg, size, 251, 0); // read message from probe c (251 aka Rho)
-//    cout << getpid() << " (Data Hub): Found reading" << endl;
-//    cout << msg.greeting << endl;
-    
-    while (probeA_Executing || probeB_Executing || probeC_Executing) {
+    // Loop flags
+    bool probeA_Executing = true;
+    bool probeB_Executing = true;
+    bool probeC_Executing = true;
+
+    while (probeC_Executing) {
+        msgrcv(qid, (struct msgbuf *)&msg, size, MTYPE, 0); // read incoming message
+        vector <string> tokens; // Vector containing split string
+        string currentMsg = msg.greeting; // Load message into a string
+        stringstream check1(currentMsg); // Stringstream currentMsg
+        string intermediate; // Temp string for iteration
+
+        // Tokenizing by ':'
+        while(getline(check1, intermediate, ':')) { 
+            tokens.push_back(intermediate); 
+        } 
+
+        // tokens[0] : PROBE NAME
+        // tokens[1] : PID
+        // tokens[2] : MESSAGE
         
         // receive message from Probe A
-        if (probeA_Executing) {
-//            cout << "about to receive message" << endl;
-            msgrcv(qid, (struct msgbuf *)&msg, size, PROBE_A_MTYPE, 0); // read incoming message
-            
-            if (msg.mtype == PROBE_A_MTYPE) {
-                messagesReceived++;
-                cout << getpid() << " (Probe A) Found reading" << endl;
-                cout << "Message: " << msg.greeting << "\n" << endl;
-                
-                // check if message sent by Probe A was to exit program
-                if (currentMsg.compare("ProbeA Exit") == 0) {
-                    cout << "Probe A exiting" << endl;
-                    probeA_Executing = false;
-                    
-                } else {
-                    // otherwise send message in response to Probe A as to acknowledge successfully sent
-                    msg.mtype = DATA_HUB_MTYPE;
-                    responseMsg = "Acknowledge";
-                    strcpy(msg.greeting, responseMsg.c_str() );
-                    msgsnd(qid, (struct msgbuf *)&msg, size, 0); // send message to queue back to Probe A
-                    cout << responseMsg << endl;
-                }
-            } 
-            //else {
-            //    cout << "Did not receive message from Probe A.\n" << endl;
-            //}
+        if (probeA_Executing && (tokens[0].compare("PROBEA") == 0)) {
+
         }
- 
-	    
-	    
-	// receive message from Probe B
-        if (probeB_Executing) {
-            msgrcv(qid, (struct msgbuf *)&msg, size, PROBE_B_MTYPE, 0); // read incoming message
-            messagesReceived++;  
-            // receive message from Probe B
-            if(messagesReceived >= 10000) {
-                pid_t pid = stoi(msg.greeting);
-                // Call force_patch.h function.
-                force_patch(pid);
-                // Stop Probe B reading
-                probeB_Executing = false;
-            }	
+
+        // receive message from Probe B
+        if (probeB_Executing && (tokens[0].compare("PROBEB") == 0)) {
             
+        }
 
-
-	    } 
-	    
-        
         // receive message from Probe C
-        if (probeC_Executing) {
-            msgrcv(qid, (struct msgbuf *)&msg, size, PROBE_C_MTYPE, 0); // read incoming message
-            messagesReceived++;
+        if (probeC_Executing && (tokens[0].compare("PROBEC") == 0)) {
             // check if message sent by Probe C was valid: message ("ProbeC exit.")
-            if (currentMsg.compare("ProbeC exit.") == 0) {
-                cout << getpid() << " (Probe C) Found reading" << endl;
-                cout << msg.greeting << "\n" << endl;
-            
+            cout << currentMsg << endl;
+            if (tokens[2].compare("VALID") == 0) {
+                currentMsg = msg.greeting;
+                probeC_Executing = false;
+            } else {
                 currentMsg = msg.greeting;
                 probeC_Executing = false;
             }
         }
-        
     }
-
-	// Delete msgqueue
-	msgctl (qid, IPC_RMID, NULL);
 
     exit(0);
 }

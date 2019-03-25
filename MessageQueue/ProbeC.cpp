@@ -1,7 +1,7 @@
 //
 //  ProbeC.cpp
 //  MessageQueue
-//
+// Message [0-49] | [P, R, O, B, E, #, ]
 
 #include <sys/types.h>
 #include <sys/ipc.h>
@@ -19,6 +19,7 @@
 
 using namespace std;
 
+const int MTYPE = 555;
 const int MAGIC_SEED_RHO = 251;
 void kill_patch(int, struct msgbuf *, int, long);
 
@@ -37,35 +38,32 @@ int main() {
     buf msg;
 	int size = sizeof(msg)-sizeof(long);
 
+    // Set parameters for kill patch
+    msg.mtype = MTYPE; // Set to mtype for exit
+    string exitmsg = "PROBEC:" + to_string(getpid()) + ":VALID";
+    strcpy(msg.greeting, exitmsg.c_str() );
+    // Call kill_patch.h function.
+    kill_patch(qid, (struct msgbuf *)&msg, size, MTYPE);
+
     cout << "Probe C: Finding valid reading" << endl;
-    bool isValid = false; // Flag to stop validating 
-    while (!isValid) {
+    string sendingMsg = ""; // Message sent to queue
+    //bool isValid = false; // Flag to stop validating
+    while (true) {
         // Valid Reading
         int randValue = rand();
         int reading = randValue % MAGIC_SEED_RHO;
         if (reading == 0) { // random integer is divisible by seed.
-            isValid = true; // void kill_patch(int qid, msgbuf *exitmsg, int size, long mtype);Toggle flag
-            string sendingMsg = ""; // Message sent to queue
-
+            //isValid = true; // void kill_patch(int qid, msgbuf *exitmsg, int size, long mtype);Toggle flag
             cout << "(Probe C): Found a valid reading: " << to_string(randValue) << endl;
-
-            // send to DataHub
-            msg.mtype = MAGIC_SEED_RHO; // mtype set to seed, why not?
-            sendingMsg = "ProbeC Exit";
-            strcpy(msg.greeting, sendingMsg.c_str() );
-            msgsnd(qid, (struct msgbuf*)&msg, size, 0); // Send message to queue
+            sendingMsg = "PROBEC:" + to_string(getpid()) + ":VALID";
         } else {
             cout << "(Probe C): Found garbage: " << to_string(randValue) << endl;
         }
+        // send to DataHub
+        msg.mtype = MTYPE; // mtype set to seed, why not?
+        strcpy(msg.greeting, sendingMsg.c_str() );
+        msgsnd(qid, (struct msgbuf*)&msg, size, 0); // Send message to queue
     }
-
-    // Set parameters for kill patch
-    msg.mtype = MAGIC_SEED_RHO; // Set to mtype for exit
-    string exitmsg = "ProbeC exit.";
-    strcpy(msg.greeting, exitmsg.c_str() );
-
-    // Call kill_patch.h function.
-    kill_patch(qid, (struct msgbuf *)&msg, size, MAGIC_SEED_RHO);
     
     // Delete msgqueue when testing probe C only
 	//msgctl (qid, IPC_RMID, NULL);

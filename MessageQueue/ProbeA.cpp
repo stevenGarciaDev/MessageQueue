@@ -22,6 +22,7 @@
 
 using namespace std;
 
+const int MTYPE = 555;
 const int MAGIC_SEED_ALPHA = 997;
 const int DATA_HUB_MTYPE = 117;
 const int MAX_INT = std::numeric_limits<int>::max();

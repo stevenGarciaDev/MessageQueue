@@ -22,6 +22,7 @@
 
 using namespace std;
 
+const int MTYPE = 555;
 const int PROBE_B_SEED = 257;
 const int MAX_INT_LIMIT = std::numeric_limits<int>::max();
 const int DATA_HUB_LIMIT = 10000;
