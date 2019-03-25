@@ -2,9 +2,6 @@
 //  ProbeA.cpp
 //  MessageQueue
 //
-//  Created by  on 2/21/19.
-//  Copyright © 2019 StevenOnSoftware. All rights reserved.
-//
 
 #include <stdio.h>
 #include <sys/types.h>
@@ -19,6 +16,7 @@
 #include <string>
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
+#include <bits/stdc++.h>
 
 using namespace std;
 
@@ -31,7 +29,7 @@ int main() {
     srand( time(0) );
 
     bool isExecuting = true;
-    bool isAcknowledged = true;
+    bool isAcknowledged = false;
     string sendingMsg = "";
 
     // generates system wide key for the queue
@@ -62,11 +60,11 @@ int main() {
             if (randomValue <= 100) {
                 cout << "Probe A will terminate as random value is less than 100: value is " << randomValue << endl;
 
-                msg.mtype = DATA_HUB_MTYPE;
-                sendingMsg = "ProbeA Exit";
+                msg.mtype = MTYPE;
+                sendingMsg = "PROBEA:" + to_string(getpid()) + ":EXIT";
                 strcpy(msg.greeting, sendingMsg.c_str() );
                 msgsnd(qid, (struct msgbuf *)&msg, size, 0); // send message to queue
-
+                
                 isExecuting = false;
                 continue;
             }
@@ -75,22 +73,28 @@ int main() {
         cout << "The random value is " << randomValue << endl;
 
         // send to DataHub
-        msg.mtype = DATA_HUB_MTYPE;
-        sendingMsg = to_string(getpid()) + " ProbeA: " + to_string(randomValue);
+        msg.mtype = MTYPE;
+        sendingMsg = "PROBEA:" + to_string(getpid()) + ":" + to_string(randomValue);
         strcpy(msg.greeting, sendingMsg.c_str() );
         msgsnd(qid, (struct msgbuf *)&msg, size, 0); // send message to queue
-        isAcknowledged = false;
 
         // wait for acknowledgement from DataHub
         if (!isAcknowledged) {
-            //cout << "About to receive" << endl;
-            msgrcv(qid, (struct msgbuf *)&msg, size, DATA_HUB_MTYPE, 0);
-            //cout << "Received" << endl;
-            if (msg.mtype == DATA_HUB_MTYPE) {
+            msg.mtype = MTYPE;
+            msgrcv(qid, (struct msgbuf *)&msg, size, MTYPE, 0); // read incoming message
+            vector <string> tokens; // Vector containing split string
+            string currentMsg = msg.greeting; // Load message into a string
+            stringstream check1(currentMsg); // Stringstream currentMsg
+            string intermediate; // Temp string for iteration
+
+            // Tokenizing by ':'
+            while(getline(check1, intermediate, ':')) { 
+                tokens.push_back(intermediate); 
+            }
+
+            if ((tokens[0].compare("HUB") == 0) && (tokens[2].compare("ACKNOWLEDGED") == 0)) {
                 isAcknowledged = true;
                 cout << "Receive acknowledgement from DataHub\n" << endl;
-            } else {
-                 cout << "DID NOT Receive acknowledgement from DataHub\n" << endl;
             }
         }
 

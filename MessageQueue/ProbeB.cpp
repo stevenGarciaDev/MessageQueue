@@ -2,9 +2,7 @@
 // ProbeB.cpp
 // MessageQueue
 //
-// Created by on 2/21/19.
-// Copyright © 2019 StevenOnSoftware. All rights reserved.
-//
+
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/ipc.h>
@@ -47,20 +45,19 @@ int main() {
 	cout << "Magic ProbeB seed: " << PROBE_B_SEED << endl;
 	cout << "Probe B begins here: " << endl;
 	int count = 0;//messages sent to the queue
-	while (isExecuting) {
+	while (true) {
 		// generate a valid random number
 		int random=MAX_INT_LIMIT;
 		if(random % PROBE_B_SEED != 0){
 			random = rand() % MAX_INT_LIMIT;
 			count++;
 			cout << "The random value is: " << random << endl;
-			//Send message to the hub
-			//msgsnd(qid, (struct msgbuf *)&msg, size, 0); // send message to queue
+			
+			// send to DataHub
+			msg.mtype = MTYPE;
+			hubMessage = "PROBEB:" + to_string(getpid()) + ":VALID";
+			strcpy(msg.greeting, hubMessage.c_str() );
+			msgsnd(qid, (struct msgbuf *)&msg, size, 0); // send message to queue
 		}
-		// send to DataHub
-		msg.mtype = PROBE_B_SEED;
-		hubMessage = to_string(getpid());
-		strcpy(msg.greeting, hubMessage.c_str() );
-		msgsnd(qid, (struct msgbuf *)&msg, size, 0); // send message to queue
 	}
 }
