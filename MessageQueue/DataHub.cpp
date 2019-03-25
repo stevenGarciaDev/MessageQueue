@@ -47,32 +47,35 @@ int main() {
         } 
 
         // tokens[0] : PROBE NAME
-        // tokens[1] : PID
+        // tokens[1] : PID (should be set to int with stoi)
         // tokens[2] : MESSAGE
         
         // receive message from Probe A
-        if (probeA_Executing && (tokens[0].compare("PROBEA") == 0)) {
-
-        }
+        //if (probeA_Executing && (tokens[0].compare("PROBEA") == 0)) {
+        //
+        //}
 
         // receive message from Probe B
-        if (probeB_Executing && (tokens[0].compare("PROBEB") == 0)) {
-            
-        }
+        //if (probeB_Executing && (tokens[0].compare("PROBEB") == 0)) {
+        //
+        //}
 
         // receive message from Probe C
         if (probeC_Executing && (tokens[0].compare("PROBEC") == 0)) {
             // check if message sent by Probe C was valid: message ("ProbeC exit.")
-            cout << currentMsg << endl;
             if (tokens[2].compare("VALID") == 0) {
                 currentMsg = msg.greeting;
-                probeC_Executing = false;
-            } else {
+                cout << currentMsg << endl;
+            } else if(tokens[2].compare("EXIT") == 0) {
                 currentMsg = msg.greeting;
-                probeC_Executing = false;
+                cout << currentMsg << endl;
+                probeC_Executing = false; // Toggle flag.
             }
         }
     }
+
+    // Remove message queue
+    msgctl (qid, IPC_RMID, NULL);
 
     exit(0);
 }
