@@ -11,6 +11,7 @@
 using namespace std;
 
 const int MTYPE = 555;
+const int HUBTYPE = 556;
 
 int force_patch(pid_t pid);
 
@@ -57,11 +58,11 @@ int main() {
         
         // receive message from Probe A
         if (probeA_Executing && (tokens[0].compare("PROBEA") == 0)) {
-            if (tokens[2].compare("EXIT")) {
+            if (tokens[2].compare("EXIT") == 0) {
                 cout << msg.greeting << endl;
                 probeA_Executing = false;
             } else {
-                msg.mtype = MTYPE;
+                msg.mtype = HUBTYPE;
                 string sendingMsg = "HUB:" + to_string(getpid()) + ":ACKNOWLEDGED";
                 strcpy(msg.greeting, sendingMsg.c_str() );
                 cout << "Sending Message: " << sendingMsg << endl;
@@ -71,7 +72,7 @@ int main() {
 
         // receive message from Probe B
         if (probeB_Executing && (tokens[0].compare("PROBEB") == 0)) {
-            if (msgCount >= 100) {
+            if (msgCount >= 10000) {
                 cout << msg.greeting << endl;
                 probeB_Executing = false;
                 pid_t pid = stoi(tokens[1]);
